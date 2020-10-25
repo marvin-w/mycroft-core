@@ -320,7 +320,6 @@ class SkillSettingsDownloader:
         self.remote_settings = None
         self.api = DeviceApi()
         self.download_timer = None
-        self.config = Configuration.get()
         self.sync_enabled = Configuration.get()["server"]\
             .get("sync_skill_settings", False)
 
