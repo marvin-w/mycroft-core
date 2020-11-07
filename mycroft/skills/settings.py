@@ -139,6 +139,10 @@ class SettingsMetaUploader:
         self.upload_timer = None
         self.sync_enabled = self.config["server"].get("sync_skill_settings",
                                                       False)
+        if not self.sync_enabled:
+            LOG.info("Skill settings sync is disabled, settingsmeta will "
+                     "not be uploaded")
+
         self._stopped = None
 
         # Property placeholders
@@ -219,7 +223,6 @@ class SettingsMetaUploader:
         the upload if a change in the file is detected.
         """
         if not self.sync_enabled:
-            LOG.debug("Skill settings sync is disabled, skipping upload")
             return
         synced = False
         if is_paired():
@@ -322,6 +325,9 @@ class SkillSettingsDownloader:
         self.download_timer = None
         self.sync_enabled = Configuration.get()["server"]\
             .get("sync_skill_settings", False)
+        if not self.sync_enabled:
+            LOG.info("Skill settings sync is disabled, backend settings will "
+                     "not be downloaded")
 
     def stop_downloading(self):
         """Stop synchronizing backend and core."""
@@ -336,7 +342,6 @@ class SkillSettingsDownloader:
         When used as a messagebus handler a message is passed but not used.
         """
         if not self.sync_enabled:
-            LOG.debug("Skill settings sync is disabled, skipping download")
             return
         if is_paired():
             remote_settings = self._get_remote_settings()
