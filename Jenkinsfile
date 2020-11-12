@@ -180,6 +180,12 @@ pipeline {
                             [$class:'DevelopersRecipientProvider']
                         ]
                     )
+                    sh(
+                        label: 'Docker Container and Image Cleanup',
+                        script: '''
+                            docker image rm voight-kampff-mark-1:${BRANCH_ALIAS}
+                        '''
+                    )
                 }
             }
         }
