@@ -1,0 +1,36 @@
+name: CI for dev and master
+
+on:
+  push:
+    branches:
+      - dev
+      - master
+  pull-request:
+    branches:
+      - dev
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.5, 3.6, 3.7, 3.8, 3.9]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        sudo apt-get update -qq
+        sudo apt-get install -qq mpg123 portaudio19-dev libglib2.0-dev swig bison libtool autoconf libglib2.0-dev libicu-dev libfann-dev realpath
+        sudo apt-get install -y gcc-4.8 g++-4.8
+        export CC="gcc-4.8"
+        ./dev_setup.sh
+    - name: Install
+      run: |
+        pycodestyle mycroft test
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        ./start-mycroft.sh unittest
